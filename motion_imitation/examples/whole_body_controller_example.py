@@ -30,7 +30,7 @@ from mpc_controller import torque_stance_leg_controller_quadprog as torque_stanc
 
 from motion_imitation.robots import a1
 from motion_imitation.robots import robot_config
-from motion_imitation.robots.gamepad import gamepad_reader
+# from motion_imitation.robots.gamepad import gamepad_reader
 
 flags.DEFINE_string("logdir", None, "where to log trajectories.")
 flags.DEFINE_bool("use_gamepad", False,
