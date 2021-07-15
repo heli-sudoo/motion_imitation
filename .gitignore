@@ -4,4 +4,5 @@ __pycache__
 *.egg-info
 output
 retarget_motion/*.txt
+retarget_motion/questions.md
 retarget_motion/data/debug.*
