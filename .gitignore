@@ -2,3 +2,5 @@ build
 dist
 __pycache__
 *.egg-info
+motion_imitation/retarget_motion/*.txt
+motion_imitation/retarget_motion/data/debug.*
