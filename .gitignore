@@ -7,3 +7,4 @@ retarget_motion/*.txt
 retarget_motion/questions.md
 retarget_motion/data/debug.*
 .vscode
+model_trained_on_crc
