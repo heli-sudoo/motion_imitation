@@ -78,12 +78,21 @@ def build_laikago_env( motor_control_mode, enable_rendering):
 
 def build_imitation_env(motion_files, num_parallel_envs, mode,
                         enable_randomizer, enable_rendering,
-                        robot_class=laikago.Laikago,
-                        trajectory_generator=simple_openloop.LaikagoPoseOffsetGenerator(action_limit=laikago.UPPER_BOUND)):
+                        robot_type="Laikago"):
   assert len(motion_files) > 0
+
+  if robot_type=="Laikago":
+      robot_class = laikago.Laikago
+      trajectory_generator=simple_openloop.LaikagoPoseOffsetGenerator(action_limit=laikago.UPPER_BOUND)
+      NUM_MOTORS = laikago.NUM_MOTORS
+  elif robot_type=="A1":
+      robot_class = a1.A1
+      trajectory_generator=simple_openloop.LaikagoPoseOffsetGenerator(action_limit=0.75)
+      NUM_MOTORS = a1.NUM_MOTORS
 
   curriculum_episode_length_start = 20
   curriculum_episode_length_end = 600
+
   
   sim_params = locomotion_gym_config.SimulationParameters()
   sim_params.enable_rendering = enable_rendering
@@ -93,9 +102,9 @@ def build_imitation_env(motion_files, num_parallel_envs, mode,
   gym_config = locomotion_gym_config.LocomotionGymConfig(simulation_parameters=sim_params)
 
   sensors = [
-      sensor_wrappers.HistoricSensorWrapper(wrapped_sensor=robot_sensors.MotorAngleSensor(num_motors=laikago.NUM_MOTORS), num_history=3),
+      sensor_wrappers.HistoricSensorWrapper(wrapped_sensor=robot_sensors.MotorAngleSensor(num_motors=NUM_MOTORS), num_history=3),
       sensor_wrappers.HistoricSensorWrapper(wrapped_sensor=robot_sensors.IMUSensor(), num_history=3),
-      sensor_wrappers.HistoricSensorWrapper(wrapped_sensor=environment_sensors.LastActionSensor(num_actions=laikago.NUM_MOTORS), num_history=3)
+      sensor_wrappers.HistoricSensorWrapper(wrapped_sensor=environment_sensors.LastActionSensor(num_actions=NUM_MOTORS), num_history=3)
   ]
 
   task = imitation_task.ImitationTask(ref_motion_filenames=motion_files,
