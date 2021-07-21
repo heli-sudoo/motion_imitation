@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # coding=utf-8
 # Copyright 2020 The Google Research Authors.
 #
@@ -135,6 +137,7 @@ def main():
   arg_parser = argparse.ArgumentParser()
   arg_parser.add_argument("--seed", dest="seed", type=int, default=None)
   arg_parser.add_argument("--mode", dest="mode", type=str, default="train")
+  arg_parser.add_argument("--robot", dest="robot", type=str, default="Laikago")
   arg_parser.add_argument("--motion_file", dest="motion_file", type=str, default="motion_imitation/data/motions/dog_pace.txt")
   arg_parser.add_argument("--visualize", dest="visualize", action="store_true", default=False)
   arg_parser.add_argument("--output_dir", dest="output_dir", type=str, default="output")
@@ -144,16 +147,23 @@ def main():
   arg_parser.add_argument("--int_save_freq", dest="int_save_freq", type=int, default=0) # save intermediate model every n policy steps
 
   args = arg_parser.parse_args()
-  
+  robot_list = ["Laikago", "A1", "MC"]
+
+  if args.robot not in robot_list:
+    print("robot does not exist")
+    return
+
   num_procs = MPI.COMM_WORLD.Get_size()
   os.environ["CUDA_VISIBLE_DEVICES"] = '-1'
   
   enable_env_rand = ENABLE_ENV_RANDOMIZER and (args.mode != "test")
+
   env = env_builder.build_imitation_env(motion_files=[args.motion_file],
                                         num_parallel_envs=num_procs,
                                         mode=args.mode,
                                         enable_randomizer=enable_env_rand,
-                                        enable_rendering=args.visualize)
+                                        enable_rendering=args.visualize,
+                                        robot_type=args.robot)
   
   model = build_model(env=env,
                       num_procs=num_procs,
