@@ -10,4 +10,4 @@ conda activate RLMPC
 export OMP_NUM_THREADS=${NSLOTS}
 
 # mpiexec -n 8 python3 motion_imitation/run.py --mode train --motion_file motion_imitation/data/motions/dog_pace.txt --int_save_freq 10000000
-mpiexec -n 24 motion_imitation/run.py --mode train --robot A1 --motion_file motion_imitation/data/motions/A1/pace.txt --output_dir motion_imitation/data/policies/A1 --int_save_freq 10000000
+mpiexec -n 24 python3 motion_imitation/run.py --mode train --robot A1 --motion_file motion_imitation/data/motions/A1/pace.txt --output_dir motion_imitation/data/policies/A1 --int_save_freq 10000000
