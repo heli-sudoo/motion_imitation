@@ -2,7 +2,6 @@ build
 dist
 __pycache__
 *.egg-info
-output
 retarget_motion/*.txt
 retarget_motion/questions.md
 retarget_motion/data/debug.*
@@ -11,3 +10,4 @@ model_trained_on_crc
 notes.*
 run_A1_pace.sh
 run_Laikago_pace.sh
+motion_imitation/data/policies
