@@ -13,7 +13,7 @@ SIM_TOE_JOINT_IDS = [
     15,  # right foot
 ]
 SIM_HIP_JOINT_IDS = [6, 16, 1, 11]
-SIM_ROOT_OFFSET = np.array([0, 0, -0.06])
+SIM_ROOT_OFFSET = np.array([0, 0, -0.05])
 SIM_TOE_OFFSET_LOCAL = [
     np.array([0, 0.05, 0.0]),
     np.array([0, 0.05, 0.01]),

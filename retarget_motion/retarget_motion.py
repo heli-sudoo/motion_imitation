@@ -50,8 +50,8 @@ mocap_motions = [
   ["trot", "data/dog_walk03_joint_pos.txt",448,481 ],
   ["trot2", "data/dog_run04_joint_pos.txt",630,663 ],
   ["canter", "data/dog_run00_joint_pos.txt", 430, 459],
-  ["left turn0", "data/dog_walk09_joint_pos.txt",1085,1124 ],
-  ["right turn0", "data/dog_walk09_joint_pos.txt", 2404,2450],
+  ["left_turn0", "data/dog_walk09_joint_pos.txt",1085,1124 ],
+  ["right_turn0", "data/dog_walk09_joint_pos.txt", 2404,2450],
 ]
 
   
