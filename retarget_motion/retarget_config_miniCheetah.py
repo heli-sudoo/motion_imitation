@@ -9,18 +9,18 @@ INIT_POS = np.array([0, 0, 0.404])
 INIT_ROT = np.array([0, 0, 0, 1.0])
 
 SIM_TOE_JOINT_IDS = [
-    3,  # right hand
-    11,  # right foot
     7,  # left hand
     15,  # left foot
+    3,  # right hand
+    11,  # right foot
 ]
-SIM_HIP_JOINT_IDS = [1, 9, 5, 13]
+SIM_HIP_JOINT_IDS = [5, 13, 1, 9]
 SIM_ROOT_OFFSET = np.array([0, 0, -0.06]) # lower the trunk height to avoid weired leg configuration
 SIM_TOE_OFFSET_LOCAL = [                  # offset the toe position of recorded dog motion
-    np.array([0, 0.01, 0.0]),
-    np.array([0, 0.01, 0.01]),
     np.array([0, -0.01, 0.0]),
-    np.array([0, -0.01, 0.01])
+    np.array([0, -0.01, 0.01]),
+    np.array([0, 0.01, 0.0]),
+    np.array([0, 0.01, 0.01])
 ]
 
 # mini cheetah always start from this pose for all motions
