@@ -140,8 +140,8 @@ def rollout(model, env):
       env: locomotion_gyn_env
 
   Returns:
-      o_array: An array of observations in numpy array
-      a_array: An array of actions in numpy array
+      o_arr: An array of observations in numpy array
+      a_arr: An array of actions in numpy array
   """
   curr_return = 0
   sum_return = 0
@@ -150,19 +150,39 @@ def rollout(model, env):
   num_local_episodes = 1
 
   o = env.reset()
-  o_array = np.array([])
-  a_array = np.array([])
-  torque_array = np.array([])
-  ctacts_array = np.array([])
+  o_arr = np.array([])
+  a_arr = np.array([])
+  torque_arr = np.array([])
+  ctacts_arr = np.array([])
+  pos_arr, rpy_arr = np.array([]), np.array([])
+  vel_arr, rpyrate_arr = np.array([]), np.array([])
+  q_arr, qd_arr = np.array([]), np.array([])
+
   while episode_count < num_local_episodes:
-    a, _ = model.predict(o, deterministic=True)
-    ctacts = np.asarray(env.GetFootContacts())
-    o, r, done, info = env.step(a)
-    torque = env.GetNominalMotorTorques()
-    o_array = np.vstack((o_array, o)) if o_array.size else o
-    a_array = np.vstack((a_array, a)) if a_array.size else a
-    torque_array = np.vstack((torque_array, torque)) if torque_array.size else torque
-    ctacts_array = np.vstack((ctacts_array, ctacts)) if ctacts_array.size else ctacts
+    ctacts = env.GetFootContacts()                        # get contact status at current step
+    pos,rpy,vel,rpyrate = env.GetTrueBaseInformation()    # get base information at current step
+    q, qd = env.GetTrueJointInformation()                 # get (actuated) joint information at current step
+    a, _ = model.predict(o, deterministic=True)           # get action from the policy for the current step
+    o, r, done, info = env.step(a)                        # perform one-step forward simulation using PD law
+    torque = env.GetAppliedMotorTorques()                 # get the applied torques for the current step
+
+    # Convert to numpy array
+    pos, rpy, vel, rpyrate = np.asarray(pos), np.asarray(rpy), np.asarray(vel), np.asarray(rpyrate)
+    ctacts = np.asarray(ctacts)
+    q, qd = np.asarray(q), np.asarray(qd)
+
+    # Stack into trajectories
+    o_arr = np.vstack((o_arr, o)) if o_arr.size else o
+    a_arr = np.vstack((a_arr, a)) if a_arr.size else a
+    torque_arr = np.vstack((torque_arr, torque)) if torque_arr.size else torque
+    ctacts_arr = np.vstack((ctacts_arr, ctacts)) if ctacts_arr.size else ctacts
+    pos_arr = np.vstack((pos_arr, pos)) if pos_arr.size else pos
+    rpy_arr = np.vstack((rpy_arr, rpy)) if rpy_arr.size else rpy
+    vel_arr = np.vstack((vel_arr, vel)) if vel_arr.size else vel
+    rpyrate_arr = np.vstack((rpyrate_arr, rpyrate)) if rpyrate_arr.size else rpyrate
+    q_arr = np.vstack((q_arr, q)) if q_arr.size else q
+    qd_arr = np.vstack((qd_arr, qd)) if qd_arr.size else qd
+
     curr_return += r
     if done:
         o = env.reset()
@@ -174,10 +194,12 @@ def rollout(model, env):
 
   mean_return = sum_return / episode_count
 
+  state_traj = (rpy_arr, pos_arr, rpyrate_arr, vel_arr, q_arr, qd_arr)
+
   if MPI.COMM_WORLD.Get_rank() == 0:
       print("Mean Return: " + str(mean_return))
       print("Episode Count: " + str(episode_count))
-  return o_array, a_array, torque_array, ctacts_array
+  return o_arr, a_arr, torque_arr, ctacts_arr, state_traj
 
 def main():
   arg_parser = argparse.ArgumentParser()
@@ -235,8 +257,13 @@ def main():
            num_procs=num_procs,
            num_episodes=args.num_test_episodes)           
   elif args.mode == "rollout":
-      o_array, a_array, torque_array, ctacts_array = rollout(model=model,
-                                 env=env)   
+      o_arr, a_arr, torque_arr \
+      ,ctacts_arr, state_traj = rollout(model=model,
+                                       env=env) 
+      print("torque_arr length = ", torque_arr.shape[0])                                         
+      print("ctacts_arr length = ", ctacts_arr.shape[0])                                         
+      print("state_traj length = ", state_traj[0].shape[0])                                         
+
   else:
       assert False, "Unsupported mode: " + args.mode
 

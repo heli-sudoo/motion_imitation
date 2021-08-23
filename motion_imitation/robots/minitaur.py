@@ -793,6 +793,7 @@ class Minitaur(object):
       Motor torques of all eight motors.
     """
     return self._observed_motor_torques
+
     
   def GetMotorTorques(self):
     """Get the amount of torque the motors are exerting.

@@ -432,6 +432,11 @@ class A1(minitaur.Minitaur):
     """Get default initial joint pose."""
     joint_pose = (INIT_MOTOR_ANGLES + JOINT_OFFSETS) * JOINT_DIRECTIONS
     return joint_pose
+  
+  def GetJointPosAndVel(self):
+    """Get (actuation) joint position and velocities.
+       Possibly not polluted with noise?
+    """
 
   def ApplyAction(self, motor_commands, motor_control_mode=None):
     """Clips and then apply the motor commands using the motor model.

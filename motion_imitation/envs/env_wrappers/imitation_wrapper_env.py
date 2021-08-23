@@ -87,11 +87,25 @@ class ImitationWrapperEnv(object):
 
     return observation, reward, done, info
   
-  def GetNominalMotorTorques(self):
+  def GetAppliedMotorTorques(self):
     return self._robot.GetNominalMotorTorques()
 
   def GetFootContacts(self):
     return self._robot.GetFootContacts()
+  
+  def GetTrueBaseInformation(self):
+    """Get trunk pos, vel, orientation, and angular velocity without polluted by sensor noise
+    """
+    pos = self._robot.GetBasePosition()
+    rpy = self._robot.GetTrueBaseRollPitchYaw()
+    vel = self._robot.GetBaseVelocity()
+    rpyrate = self._robot.GetTrueBaseRollPitchYawRate()
+    return pos, rpy, vel, rpyrate
+  
+  def GetTrueJointInformation(self):
+    q = self._robot.GetTrueMotorAngles()
+    qd = self._robot.GetTrueMotorVelocities()
+    return q, qd
 
   def reset(self, initial_motor_angles=None, reset_duration=0.0):
     """Resets the robot's position in the world or rebuild the sim world.
