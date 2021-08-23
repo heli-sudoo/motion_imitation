@@ -90,6 +90,9 @@ class ImitationWrapperEnv(object):
   def GetNominalMotorTorques(self):
     return self._robot.GetNominalMotorTorques()
 
+  def GetFootContacts(self):
+    return self._robot.GetFootContacts()
+
   def reset(self, initial_motor_angles=None, reset_duration=0.0):
     """Resets the robot's position in the world or rebuild the sim world.
 

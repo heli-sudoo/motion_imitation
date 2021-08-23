@@ -153,13 +153,16 @@ def rollout(model, env):
   o_array = np.array([])
   a_array = np.array([])
   torque_array = np.array([])
+  ctacts_array = np.array([])
   while episode_count < num_local_episodes:
     a, _ = model.predict(o, deterministic=True)
+    ctacts = np.asarray(env.GetFootContacts())
     o, r, done, info = env.step(a)
     torque = env.GetNominalMotorTorques()
     o_array = np.vstack((o_array, o)) if o_array.size else o
     a_array = np.vstack((a_array, a)) if a_array.size else a
     torque_array = np.vstack((torque_array, torque)) if torque_array.size else torque
+    ctacts_array = np.vstack((ctacts_array, ctacts)) if ctacts_array.size else ctacts
     curr_return += r
     if done:
         o = env.reset()
@@ -174,7 +177,7 @@ def rollout(model, env):
   if MPI.COMM_WORLD.Get_rank() == 0:
       print("Mean Return: " + str(mean_return))
       print("Episode Count: " + str(episode_count))
-  return o_array, a_array, torque_array
+  return o_array, a_array, torque_array, ctacts_array
 
 def main():
   arg_parser = argparse.ArgumentParser()
@@ -232,10 +235,8 @@ def main():
            num_procs=num_procs,
            num_episodes=args.num_test_episodes)           
   elif args.mode == "rollout":
-      o_array, a_array, torque_array = rollout(model=model,
+      o_array, a_array, torque_array, ctacts_array = rollout(model=model,
                                  env=env)   
-      # print(o_array[0])   
-      print(torque_array[1])                              
   else:
       assert False, "Unsupported mode: " + args.mode
 
