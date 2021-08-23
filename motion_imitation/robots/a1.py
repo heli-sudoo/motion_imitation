@@ -306,6 +306,14 @@ class A1(minitaur.Minitaur):
   def GetHipPositionsInBaseFrame(self):
     return _DEFAULT_HIP_POSITIONS
 
+  def GetNominalMotorTorques(self):
+    """ Get the nominal torques computed via ApplyAction
+
+    Returns:
+      Nominal motor torques
+    """
+    return self._applied_motor_torques
+
   def GetFootContacts(self):
     all_contacts = self._pybullet_client.getContactPoints(bodyA=self.quadruped)
 
