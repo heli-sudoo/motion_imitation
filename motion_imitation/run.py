@@ -116,7 +116,6 @@ def test(model, env, num_procs, num_episodes=None):
     a, _ = model.predict(o, deterministic=True)
     o, r, done, info = env.step(a)
     curr_return += r
-
     if done:
         o = env.reset()
         sum_return += curr_return
@@ -132,6 +131,50 @@ def test(model, env, num_procs, num_episodes=None):
       print("Episode Count: " + str(episode_count))
 
   return
+
+def rollout(model, env):
+  """ Roll out with the model simulated in env
+
+  Args: 
+      model: trained control policy
+      env: locomotion_gyn_env
+
+  Returns:
+      o_array: An array of observations in numpy array
+      a_array: An array of actions in numpy array
+  """
+  curr_return = 0
+  sum_return = 0
+  episode_count = 0
+  
+  num_local_episodes = 1
+
+  o = env.reset()
+  o_array = np.array([])
+  a_array = np.array([])
+  torque_array = np.array([])
+  while episode_count < num_local_episodes:
+    a, _ = model.predict(o, deterministic=True)
+    o, r, done, info = env.step(a)
+    torque = env.GetNominalMotorTorques()
+    o_array = np.vstack((o_array, o)) if o_array.size else o
+    a_array = np.vstack((a_array, a)) if a_array.size else a
+    torque_array = np.vstack((torque_array, torque)) if torque_array.size else torque
+    curr_return += r
+    if done:
+        o = env.reset()
+        sum_return += curr_return
+        episode_count += 1
+
+  sum_return = MPI.COMM_WORLD.allreduce(sum_return, MPI.SUM)
+  episode_count = MPI.COMM_WORLD.allreduce(episode_count, MPI.SUM)
+
+  mean_return = sum_return / episode_count
+
+  if MPI.COMM_WORLD.Get_rank() == 0:
+      print("Mean Return: " + str(mean_return))
+      print("Episode Count: " + str(episode_count))
+  return o_array, a_array, torque_array
 
 def main():
   arg_parser = argparse.ArgumentParser()
@@ -158,9 +201,11 @@ def main():
   
   enable_env_rand = ENABLE_ENV_RANDOMIZER and (args.mode != "test")
 
+  mode = "test" if args.mode=="rollout" else args.mode
+
   env = env_builder.build_imitation_env(motion_files=[args.motion_file],
                                         num_parallel_envs=num_procs,
-                                        mode=args.mode,
+                                        mode=mode,
                                         enable_randomizer=enable_env_rand,
                                         enable_rendering=args.visualize,
                                         robot_type=args.robot)
@@ -185,7 +230,12 @@ def main():
       test(model=model,
            env=env,
            num_procs=num_procs,
-           num_episodes=args.num_test_episodes)
+           num_episodes=args.num_test_episodes)           
+  elif args.mode == "rollout":
+      o_array, a_array, torque_array = rollout(model=model,
+                                 env=env)   
+      # print(o_array[0])   
+      print(torque_array[1])                              
   else:
       assert False, "Unsupported mode: " + args.mode
 

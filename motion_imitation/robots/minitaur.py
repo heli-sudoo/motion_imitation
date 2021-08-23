@@ -794,6 +794,14 @@ class Minitaur(object):
     """
     return self._observed_motor_torques
 
+  def GetNominalMotorTorques(self):
+    """ Get the nominal torques computed via ApplyAction
+
+    Returns:
+      Nominal motor torques
+    """
+    return self._applied_motor_torques
+    
   def GetMotorTorques(self):
     """Get the amount of torque the motors are exerting.
 
@@ -929,13 +937,13 @@ class Minitaur(object):
     self._observed_motor_torques = observed_torque
 
     # Transform into the motor space when applying the torque.
-    self._applied_motor_torque = np.multiply(actual_torque,
+    self._applied_motor_torques = np.multiply(actual_torque,
                                              self._motor_direction)
     motor_ids = []
     motor_torques = []
 
     for motor_id, motor_torque, motor_enabled in zip(
-        self._motor_id_list, self._applied_motor_torque,
+        self._motor_id_list, self._applied_motor_torques,
         self._motor_enabled_list):
       if motor_enabled:
         motor_ids.append(motor_id)

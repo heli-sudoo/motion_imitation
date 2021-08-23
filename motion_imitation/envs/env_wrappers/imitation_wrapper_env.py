@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from math import pi
 
 import gym
 import numpy as np
@@ -76,10 +77,18 @@ class ImitationWrapperEnv(object):
 
     if not done:
       self._total_step_count += 1
+    else:
+      print("episode terminated ")
+      print("env_step_counter =", self.env_step_counter)
+      print("max_episode_steps =", self._max_episode_steps)
+        
 
     info = {"terminated": terminated}
 
     return observation, reward, done, info
+  
+  def GetNominalMotorTorques(self):
+    return self._robot.GetNominalMotorTorques()
 
   def reset(self, initial_motor_angles=None, reset_duration=0.0):
     """Resets the robot's position in the world or rebuild the sim world.
