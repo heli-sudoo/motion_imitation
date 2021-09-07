@@ -35,6 +35,8 @@ from motion_imitation.learning import ppo_imitation as ppo_imitation
 
 from stable_baselines.common.callbacks import CheckpointCallback
 
+import pickle as pkl
+
 TIMESTEPS_PER_ACTORBATCH = 4096
 OPTIM_BATCHSIZE = 256
 
@@ -157,6 +159,9 @@ def rollout(model, env):
   pos_arr, rpy_arr = np.array([]), np.array([])
   vel_arr, rpyrate_arr = np.array([]), np.array([])
   q_arr, qd_arr = np.array([]), np.array([])
+  time_arr = np.array([])
+  time = 0
+  time_step = 0.033
 
   while episode_count < num_local_episodes:
     ctacts = env.GetFootContacts()                        # get contact status at current step
@@ -182,8 +187,10 @@ def rollout(model, env):
     rpyrate_arr = np.vstack((rpyrate_arr, rpyrate)) if rpyrate_arr.size else rpyrate
     q_arr = np.vstack((q_arr, q)) if q_arr.size else q
     qd_arr = np.vstack((qd_arr, qd)) if qd_arr.size else qd
+    time_arr = np.append(time_arr, time)
 
     curr_return += r
+    time += time_step
     if done:
         o = env.reset()
         sum_return += curr_return
@@ -199,7 +206,14 @@ def rollout(model, env):
   if MPI.COMM_WORLD.Get_rank() == 0:
       print("Mean Return: " + str(mean_return))
       print("Episode Count: " + str(episode_count))
-  return o_arr, a_arr, torque_arr, ctacts_arr, state_traj
+
+  data = (time_arr, o_arr, a_arr, torque_arr, ctacts_arr, state_traj)
+  fname = currentdir + '/data/rollout/traj_data.pickle'
+
+  with open(fname, 'wb') as f:
+    pkl.dump(data, f, pkl.HIGHEST_PROTOCOL)
+
+  return
 
 def main():
   arg_parser = argparse.ArgumentParser()
@@ -257,13 +271,7 @@ def main():
            num_procs=num_procs,
            num_episodes=args.num_test_episodes)           
   elif args.mode == "rollout":
-      o_arr, a_arr, torque_arr \
-      ,ctacts_arr, state_traj = rollout(model=model,
-                                       env=env) 
-      print("torque_arr length = ", torque_arr.shape[0])                                         
-      print("ctacts_arr length = ", ctacts_arr.shape[0])                                         
-      print("state_traj length = ", state_traj[0].shape[0])                                         
-
+      rollout(model=model, env=env) 
   else:
       assert False, "Unsupported mode: " + args.mode
 

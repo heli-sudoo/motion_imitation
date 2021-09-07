@@ -437,6 +437,7 @@ class A1(minitaur.Minitaur):
     """Get (actuation) joint position and velocities.
        Possibly not polluted with noise?
     """
+    
 
   def ApplyAction(self, motor_commands, motor_control_mode=None):
     """Clips and then apply the motor commands using the motor model.

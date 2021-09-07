@@ -11,3 +11,4 @@ notes.*
 run_A1_pace.sh
 run_Laikago_pace.sh
 motion_imitation/data/policies
+figures/
