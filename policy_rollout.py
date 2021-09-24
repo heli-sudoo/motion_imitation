@@ -10,6 +10,7 @@ currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
+rollout_dir = currentdir + '/motion_imitation/data/rollout/' 
 rollout_fname = currentdir + '/motion_imitation/data/rollout/traj_data.pickle'
 
 LEG_INDEX = {'FR': 0, 'FL': 1, 'RR': 2, 'RL': 3}
@@ -139,7 +140,25 @@ plot_body_pos(time_arr, pos_arr)
 plot_body_rpy(time_arr, rpy_arr)
 plot_body_vel(time_arr, vel_arr)
 plot_body_rpy_rate(time_arr, rpyrate_arr)
-# plot_contact_sequences(time_arr, ctacts_arr)
-
+plot_contact_sequences(time_arr, ctacts_arr)
 plt.tight_layout()
 plt.show()
+
+# save roll-out trajectory to txt file
+torque_fname = rollout_dir + 'torque.txt'
+ctact_fname = rollout_dir + 'contact.txt'
+gjoint_fname = rollout_dir + 'generalized_joint.txt'
+gvel_fname = rollout_dir + 'generalized_vel.txt'
+
+with open(torque_fname, 'w') as ft:
+    np.savetxt(ft, torque_arr, fmt = '%10.6f')
+
+with open(ctact_fname, 'w') as fc:
+    np.savetxt(fc, ctacts_arr, fmt = '%d')
+
+with open(gjoint_fname, 'w') as fj:
+    np.savetxt(fj, np.hstack((pos_arr, rpy_arr, q_arr)), fmt = '%10.6f')
+
+with open(gvel_fname, 'w') as fv:
+    np.savetxt(fv, np.hstack((vel_arr, rpyrate_arr, qd_arr)), fmt = '%10.6f')
+
