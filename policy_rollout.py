@@ -10,7 +10,6 @@ currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 os.sys.path.insert(0, parentdir)
-rollout_dir = currentdir + '/motion_imitation/data/rollout/' 
 rollout_fname = currentdir + '/motion_imitation/data/rollout/traj_data.pickle'
 
 LEG_INDEX = {'FR': 0, 'FL': 1, 'RR': 2, 'RL': 3}
@@ -145,10 +144,15 @@ plt.tight_layout()
 plt.show()
 
 # save roll-out trajectory to txt file
+rollout_dir = '/home/wensinglab/HL/Code/HSDDP/MATLAB/Examples/Quadruped/Pacing/RolloutTrajectory'
 torque_fname = rollout_dir + 'torque.txt'
 ctact_fname = rollout_dir + 'contact.txt'
 gjoint_fname = rollout_dir + 'generalized_joint.txt'
 gvel_fname = rollout_dir + 'generalized_vel.txt'
+time_fname = rollout_dir + 'timestep.txt'
+
+with open(time_fname, 'w') as ftime:
+    np.savetxt(ftime, time_arr, fmt = '%10.6f')
 
 with open(torque_fname, 'w') as ft:
     np.savetxt(ft, torque_arr, fmt = '%10.6f')
