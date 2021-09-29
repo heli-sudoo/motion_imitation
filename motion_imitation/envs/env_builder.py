@@ -78,7 +78,7 @@ def build_laikago_env( motor_control_mode, enable_rendering):
 
 def build_imitation_env(motion_files, num_parallel_envs, mode,
                         enable_randomizer, enable_rendering,
-                        robot_type="Laikago"):
+                        plane=True, robot_type="Laikago"):
   assert len(motion_files) > 0
 
   if robot_type=="Laikago":
@@ -119,7 +119,7 @@ def build_imitation_env(motion_files, num_parallel_envs, mode,
     randomizers.append(randomizer)
 
   env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config, robot_class=robot_class,
-                                            env_randomizers=randomizers, robot_sensors=sensors, task=task)
+                                            env_randomizers=randomizers, robot_sensors=sensors, task=task, plane= plane)
 
   env = observation_dictionary_to_array_wrapper.ObservationDictionaryToArrayWrapper(env)
   env = trajectory_generator_wrapper_env.TrajectoryGeneratorWrapperEnv(env,

@@ -26,6 +26,7 @@ import pybullet_data as pd
 from motion_imitation.robots import robot_config
 from motion_imitation.envs.sensors import sensor
 from motion_imitation.envs.sensors import space_utils
+from envs.utilities import terrain
 
 _ACTION_EPS = 0.01
 _NUM_SIMULATION_ITERATION_STEPS = 300
@@ -45,7 +46,8 @@ class LocomotionGymEnv(gym.Env):
                env_sensors=None,
                robot_sensors=None,
                task=None,
-               env_randomizers=None):
+               env_randomizers=None,
+               plane = True):
     """Initializes the locomotion gym environment.
 
     Args:
@@ -69,6 +71,7 @@ class LocomotionGymEnv(gym.Env):
     self._gym_config = gym_config
     self._robot_class = robot_class
     self._robot_sensors = robot_sensors
+    self.plane = plane
 
     self._sensors = env_sensors if env_sensors is not None else list()
     if self._robot_class is None:
@@ -222,9 +225,13 @@ class LocomotionGymEnv(gym.Env):
       self._pybullet_client.setGravity(0, 0, -10)
 
       # Rebuild the world.
-      self._world_dict = {
-          "ground": self._pybullet_client.loadURDF("plane_implicit.urdf")
-      }
+      if self.plane:
+        self._world_dict = {
+            "ground": self._pybullet_client.loadURDF("plane_implicit.urdf")
+        }
+      else:
+        ground_id = terrain.get_uneven_terrain()
+        self.set_ground(ground_id = ground_id)
 
       # Rebuild the robot
       self._robot = self._robot_class(
