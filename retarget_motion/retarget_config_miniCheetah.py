@@ -13,21 +13,21 @@ SIM_TOE_JOINT_IDS = [
     7,  # left hand
     15,  # left foot
     3,  # right hand
-    11,  # right foot
+    11,  # right foot    
 ]
-SIM_HIP_JOINT_IDS = [5, 13, 1, 9]
-SIM_ROOT_OFFSET = np.array([0, 0, -0.06]) # lower the trunk height to avoid weired leg configuration
+SIM_HIP_JOINT_IDS = [4, 12,0, 8]
+SIM_ROOT_OFFSET = np.array([0, 0, -0.03]) # lower the trunk height to avoid weired leg configuration
 SIM_TOE_OFFSET_LOCAL = [                  # offset the toe position of recorded dog motion
-    np.array([0, -0.01, 0.0]),
-    np.array([0, -0.01, 0.01]),
-    np.array([0, 0.01, 0.0]),
-    np.array([0, 0.01, 0.01])
+    np.array([0, 0.05, 0.0]),
+    np.array([0, 0.05, 0.01]),
+    np.array([0, -0.05, 0.0]),
+    np.array([0, -0.05, 0.01])
 ]
 
 # mini cheetah always start from this pose for all motions
-# also used as initial guess to numerocally solve IK
+# also used as initial guess to numerically solve IK
 DEFAULT_JOINT_POSE = np.array(
-    [0, 0.65, 1.569, 0, 0.65, 1.569, 0, 0.65, 1.569, 0, 0.65, 1.569])
+    [0, -0.65, 1.569, 0, -0.65, 1.569, 0, -0.65, 1.569, 0, -0.65, 1.569])
 
 # damping used by numerical IK solver
 JOINT_DAMPING = [0.1, 0.05, 0.01,
