@@ -13,8 +13,7 @@ from motion_imitation.robots import mini_cheetah as mc
 from motion_imitation.robots import robot_config
 
 GROUND_URDF_FILE = "plane.urdf"
-DES_JNT_ANGLES = np.array(
-    [0., -.8, 1.6, 0., -.8, 1.6, 0., -.8, 1.6, 0., -.8, 1.6])    
+DES_JNT_ANGLES = np.array([0., -.8, 1.6] *4)
 def main():    
     # create a pybullet client and connect to GUI server
     pybullet_client = bullet_client.BulletClient(p.GUI)
