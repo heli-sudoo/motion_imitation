@@ -1,5 +1,6 @@
 import numpy as np
 
+
 URDF_FILENAME = "mini_cheetah/mini_cheetah.urdf"
 # mini_cheetah.urdf file could be found in pybullet examples
 # https://github.com/bulletphysics/bullet3/tree/master/examples/pybullet/gym/pybullet_data
