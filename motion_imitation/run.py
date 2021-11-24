@@ -273,7 +273,7 @@ def main():
                                           mode=mode,
                                           enable_randomizer=enable_env_rand,
                                           enable_rendering=args.visualize,
-                                          plane = False, robot_type=args.robot)
+                                          plane = True, robot_type=args.robot)
 
     model = build_model(env=env,
                         num_procs=num_procs,
