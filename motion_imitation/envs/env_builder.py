@@ -37,6 +37,7 @@ from motion_imitation.envs.sensors import robot_sensors
 from motion_imitation.envs.utilities import controllable_env_randomizer_from_config
 from motion_imitation.robots import laikago
 from motion_imitation.robots import a1
+from motion_imitation.robots import mini_cheetah as mc
 from motion_imitation.robots import robot_config
 
 
@@ -85,10 +86,14 @@ def build_imitation_env(motion_files, num_parallel_envs, mode,
       robot_class = laikago.Laikago
       trajectory_generator=simple_openloop.LaikagoPoseOffsetGenerator(action_limit=laikago.UPPER_BOUND)
       NUM_MOTORS = laikago.NUM_MOTORS
-  elif robot_type=="A1":
+  if robot_type=="A1":
       robot_class = a1.A1
       trajectory_generator=simple_openloop.LaikagoPoseOffsetGenerator(action_limit=0.75)
       NUM_MOTORS = a1.NUM_MOTORS
+  if robot_type=="MC":
+      robot_class = mc.MiniCheetah
+      trajectory_generator=simple_openloop.MiniCheetahPoseOffsetGenerator(action_limit=3.14)
+      NUM_MOTORS = mc.NUM_MOTORS
 
   curriculum_episode_length_start = 20
   curriculum_episode_length_end = 600
@@ -98,6 +103,8 @@ def build_imitation_env(motion_files, num_parallel_envs, mode,
   sim_params.enable_rendering = enable_rendering
   sim_params.allow_knee_contact = True
   sim_params.motor_control_mode = robot_config.MotorControlMode.POSITION
+  sim_params.sim_time_step_s = 0.001 # default value of simulation time step in pybullet
+  sim_params.num_action_repeat = 20 # default numer of repeat for one env time step
 
   gym_config = locomotion_gym_config.LocomotionGymConfig(simulation_parameters=sim_params)
 
