@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 import os
 import inspect
+
 currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -127,21 +128,25 @@ def plot_contact_sequences(time, ctacts):
         ax.set_yticks([-1, 0, 1, 2, 3, 4])
         ax.set_yticklabels(('','FR','FL','RR','RL',''))
 
+
+
 with open(rollout_fname, 'rb') as f:
     data = pkl.load(f)
 time_arr, o_arr, a_arr, torque_arr, ctacts_arr, state_traj = data
 rpy_arr, pos_arr, rpyrate_arr, vel_arr, q_arr, qd_arr = state_traj
 
-plot_joint_torques(time_arr, torque_arr)
-plot_joint_angles(time_arr, q_arr)
-plot_joint_vels(time_arr, qd_arr)
-plot_body_pos(time_arr, pos_arr)
-plot_body_rpy(time_arr, rpy_arr)
-plot_body_vel(time_arr, vel_arr)
-plot_body_rpy_rate(time_arr, rpyrate_arr)
-plot_contact_sequences(time_arr, ctacts_arr)
-plt.tight_layout()
-plt.show()
+# # plot trajectories
+# plot_joint_torques(time_arr, torque_arr)
+# plot_joint_angles(time_arr, q_arr)
+# plot_joint_vels(time_arr, qd_arr)
+# plot_body_pos(time_arr, pos_arr)
+# plot_body_rpy(time_arr, rpy_arr)
+# plot_body_vel(time_arr, vel_arr)
+# plot_body_rpy_rate(time_arr, rpyrate_arr)
+# plot_contact_sequences(time_arr, ctacts_arr)
+# plt.tight_layout()
+# plt.show()
+
 
 # save roll-out trajectory to txt file
 rollout_dir = '/home/wensinglab/HL/Code/HSDDP/MATLAB/Examples/Quadruped/Pacing/RolloutTrajectory'
@@ -165,4 +170,3 @@ with open(gjoint_fname, 'w') as fj:
 
 with open(gvel_fname, 'w') as fv:
     np.savetxt(fv, np.hstack((vel_arr, rpyrate_arr, qd_arr)), fmt = '%10.6f')
-
