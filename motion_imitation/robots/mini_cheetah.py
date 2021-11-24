@@ -10,6 +10,8 @@ import pybullet_data as pd
 from motion_imitation.robots import laikago_motor
 from motion_imitation.robots import minitaur
 from motion_imitation.robots import robot_config
+from motion_imitation.robots import mini_cheetah_pose_utils as mc_pose
+from motion_imitation.envs import locomotion_gym_config
 
 URDF_FILENAME = "mini_cheetah/mini_cheetah.urdf"
 
@@ -29,9 +31,11 @@ MOTOR_NAMES = [
     "abduct_hr_to_thigh_hr_j",  # Right rear hip (upper3).
     "thigh_hr_to_knee_hr_j",  # Right rear knee (lower3).
 ]
+MAX_MOTOR_ANGLE_CHANGE_PER_STEP = 0.2
+
 DEFAULT_TORQUE_LIMITS = [12, 18, 12] * 4
 INIT_RACK_POSITION = [0, 0, 1.4]
-INIT_POSITION = [0, 0, 0.4]
+INIT_POSITION = [0, 0, 0.404]
 JOINT_DIRECTIONS = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 DOFS_PER_LEG = 3
 JOINT_OFFSETS = np.array([0.0, 0.0, 0.0] * 4)
@@ -40,27 +44,24 @@ ABAD_LOCATIONS = np.array([[0.19, 0.049, 0],
                           [-0.19, 0.049, 0],
                           [0.19, -0.049, 0],
                           [-0.19, -0.049, 0]])
-DEFAULT_ABDUCTION_ANGLE = 0.0
-DEFAULT_HIP_ANGLE = -1.1
-DEFAULT_KNEE_ANGLE = 2.3
+
+ABAD_UPPER_BOUND = 2*PI/3
+HIP_UPPER_BOUND = 1.5*PI
+KNEE_UPPER_BOUND = 0.86*PI
+
 # Bases on the readings from 's default pose.
 INIT_MOTOR_ANGLES = [
-    DEFAULT_ABDUCTION_ANGLE, DEFAULT_HIP_ANGLE, DEFAULT_KNEE_ANGLE
+    mc_pose.DEFAULT_ABDUCTION_ANGLE, 
+    mc_pose.DEFAULT_HIP_ANGLE, 
+    mc_pose.DEFAULT_KNEE_ANGLE
 ] * NUM_LEGS
 
-
-# left hand, left foot, right hand, right foot
-ABAD_LINK_IDS = [5, 13, 1, 9]
-THEIGH_LINK_IDS = [6, 14, 2, 10]
-SHANK_LINK_IDS = [7, 15, 3, 11]
-TOE_LINK_IDS = [8, 16, 4, 12]
-
-ABDUCTION_P_GAIN = 50.0
+ABDUCTION_P_GAIN = 100.0
 ABDUCTION_D_GAIN = 1.
-HIP_P_GAIN = 50.0
-HIP_D_GAIN = 1.0
-KNEE_P_GAIN = 50.0
-KNEE_D_GAIN = 1.0
+HIP_P_GAIN = 100.0
+HIP_D_GAIN = 2.0
+KNEE_P_GAIN = 100.0
+KNEE_D_GAIN = 2.0
 
 ABAD_LINK_LENGTH = 0.062
 HIP_LINK_LENGTH = 0.209
@@ -136,7 +137,44 @@ def foot_positions_in_body(leg_angles):
 
 class MiniCheetah(minitaur.Minitaur):
   """A simulation for the mini cheetah robot."""
-
+  ACTION_CONFIG = [
+      locomotion_gym_config.ScalarField(name="FL_hip_motor",
+                                        upper_bound=ABAD_UPPER_BOUND,
+                                        lower_bound=-ABAD_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="FL_upper_joint",
+                                        upper_bound=HIP_UPPER_BOUND,
+                                        lower_bound=-HIP_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="FL_lower_joint",
+                                        upper_bound=KNEE_UPPER_BOUND,
+                                        lower_bound=-KNEE_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="RL_hip_motor",
+                                        upper_bound=ABAD_UPPER_BOUND,
+                                        lower_bound=-ABAD_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="RL_upper_joint",
+                                        upper_bound=HIP_UPPER_BOUND,
+                                        lower_bound=-HIP_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="RL_lower_joint",
+                                        upper_bound=KNEE_UPPER_BOUND,
+                                        lower_bound=-KNEE_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="FR_hip_motor",
+                                        upper_bound=ABAD_UPPER_BOUND,
+                                        lower_bound=-ABAD_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="FR_upper_joint",
+                                        upper_bound=HIP_UPPER_BOUND,
+                                        lower_bound=-HIP_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="FR_lower_joint",
+                                        upper_bound=KNEE_UPPER_BOUND,
+                                        lower_bound=-KNEE_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="RR_hip_motor",
+                                        upper_bound=ABAD_UPPER_BOUND,
+                                        lower_bound=-ABAD_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="RR_upper_joint",
+                                        upper_bound=HIP_UPPER_BOUND,
+                                        lower_bound=-HIP_UPPER_BOUND),
+      locomotion_gym_config.ScalarField(name="RR_lower_joint",
+                                        upper_bound=-KNEE_UPPER_BOUND,
+                                        lower_bound=-KNEE_UPPER_BOUND),
+  ]
   def __init__( self,
       pybullet_client,
       urdf_filename=URDF_FILENAME,
@@ -144,7 +182,7 @@ class MiniCheetah(minitaur.Minitaur):
       time_step=0.001,
       action_repeat=10,
       sensors=None,
-      control_latency=0.001,
+      control_latency=0.002,
       on_rack=False,
       enable_action_interpolation=True,
       enable_action_filter=False,
@@ -216,7 +254,7 @@ class MiniCheetah(minitaur.Minitaur):
         self.ReceiveObservation()
 
   def GetURDFFile(self):
-    return os.path.join(self._urdf_root, "mini_cheetah/mini_cheetah.urdf")
+    return self._urdf_filename
 
   def ResetPose(self, add_constraint):
     del add_constraint
@@ -249,6 +287,50 @@ class MiniCheetah(minitaur.Minitaur):
     init_orientation = [0, 0, 0, 1.0]
     return init_orientation
   
+  def _ClipMotorCommands(self, motor_commands):
+    """Clips motor commands.
+
+    Args:
+      motor_commands: np.array. Can be motor angles, torques, hybrid commands,
+        or motor pwms (for Minitaur only).
+
+    Returns:
+      Clipped motor commands.
+    """
+
+    # clamp the motor command by the joint limit, in case weired things happens
+    max_angle_change = MAX_MOTOR_ANGLE_CHANGE_PER_STEP
+    current_motor_angles = self.GetMotorAngles()
+    motor_commands = np.clip(motor_commands,
+                             current_motor_angles - max_angle_change,
+                             current_motor_angles + max_angle_change)
+    return motor_commands
+
+  def GetDefaultInitPosition(self):
+    """Get default initial base position."""
+    return self._GetDefaultInitPosition()
+
+  def GetDefaultInitOrientation(self):
+    """Get default initial base orientation."""
+    return self._GetDefaultInitOrientation()
+
+  def GetDefaultInitJointPose(self):
+    """Get default initial joint pose."""
+    joint_pose = (INIT_MOTOR_ANGLES + JOINT_OFFSETS) * JOINT_DIRECTIONS
+    return joint_pose
+  
+  def ApplyAction(self, motor_commands, motor_control_mode=None):
+    """Clips and then apply the motor commands using the motor model.
+
+    Args:
+      motor_commands: np.array. Can be motor angles, torques, hybrid commands,
+        or motor pwms (for Minitaur only).N
+      motor_control_mode: A MotorControlMode enum.
+    """
+    if self._enable_clip_motor_commands:
+      motor_commands = self._ClipMotorCommands(motor_commands)
+    super(MiniCheetah, self).ApplyAction(motor_commands, motor_control_mode)
+
   def computeLegJacobian(self, leg_angle, leg_id):
     return analytical_leg_jacobian(leg_angle, leg_id)
   
