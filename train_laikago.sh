@@ -1,0 +1,2 @@
+#!/bin/bash
+python3 motion_imitation/run.py --mode train --robot Laikago --motion_file motion_imitation/data/motions/Laikago/dog_trot.txt --output_dir motion_imitation/data/policies/Laikago/trot_01 --int_save_freq 10000000 --visualize
