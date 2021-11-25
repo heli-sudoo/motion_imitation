@@ -2,12 +2,11 @@ build
 dist
 __pycache__
 *.egg-info
-retarget_motion/*.txt
+# retarget_motion/*.txt
 retarget_motion/questions.md
 retarget_motion/data/debug.*
 .vscode
-model_trained_on_crc
 notes.*
-motion_imitation/data
+motion_imitation/data/policies
 motion_imitation/data/rollout
 figures/
