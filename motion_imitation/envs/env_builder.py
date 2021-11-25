@@ -104,7 +104,7 @@ def build_imitation_env(motion_files, num_parallel_envs, mode,
   sim_params.allow_knee_contact = True
   sim_params.motor_control_mode = robot_config.MotorControlMode.POSITION
   sim_params.sim_time_step_s = 0.001 # default value of simulation time step in pybullet
-  sim_params.num_action_repeat = 20 # default numer of repeat for one env time step
+  sim_params.num_action_repeat = 33 # default numer of repeat for one env time step
 
   gym_config = locomotion_gym_config.LocomotionGymConfig(simulation_parameters=sim_params)
 
