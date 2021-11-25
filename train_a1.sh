@@ -1,2 +1,0 @@
-#!/bin/bash
-python3 motion_imitation/run.py --mode train --robot A1 --motion_file motion_imitation/data/motions/A1/trot.txt --output_dir motion_imitation/data/policies/A1/trot_01 --int_save_freq 10000000 --visualize
