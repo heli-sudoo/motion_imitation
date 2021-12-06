@@ -1,4 +1,4 @@
-#!/bin/bash
+# #!/bin/bash
 Mode=rollout
 Robot=A1
 Gait=trot
