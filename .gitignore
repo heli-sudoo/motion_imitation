@@ -7,6 +7,6 @@ retarget_motion/questions.md
 retarget_motion/data/debug.*
 .vscode
 notes.*
-motion_imitation/data/policies
+#motion_imitation/data/policies
 motion_imitation/data/rollout
 figures/
