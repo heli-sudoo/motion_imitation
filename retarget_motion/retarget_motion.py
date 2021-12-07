@@ -350,7 +350,7 @@ def main(argv):
       print("mocap_name=", mocap_motion[0])
       joint_pos_data = load_ref_data(mocap_motion[1],mocap_motion[2],mocap_motion[3])
     
-      num_markers = joint_pos_data.shape[-1] // POS_SIZE
+      num_markers = joint_pos_data.shape[-1] 
       marker_ids = build_markers(num_markers)
     
       retarget_frames = retarget_motion(robot, joint_pos_data)
