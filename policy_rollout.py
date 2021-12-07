@@ -149,7 +149,7 @@ rpy_arr, pos_arr, rpyrate_arr, vel_arr, q_arr, qd_arr = state_traj
 
 
 # save roll-out trajectory to txt file
-rollout_dir = '/home/wensinglab/HL/Code/HSDDP/MATLAB/Examples/Quadruped/Pacing/RolloutTrajectory'
+rollout_dir = currentdir + '/motion_imitation/data/rollout/'
 torque_fname = rollout_dir + 'torque.txt'
 ctact_fname = rollout_dir + 'contact.txt'
 gjoint_fname = rollout_dir + 'generalized_joint.txt'
