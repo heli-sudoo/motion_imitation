@@ -10,4 +10,4 @@ notes.*
 #motion_imitation/data/policies
 motion_imitation/data/rollout
 figures/
-.pickle
+*.pickle
