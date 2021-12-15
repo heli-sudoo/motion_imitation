@@ -77,10 +77,10 @@ class ImitationWrapperEnv(object):
 
     if not done:
       self._total_step_count += 1
-    else:
-      print("episode terminated ")
-      print("env_step_counter =", self.env_step_counter)
-      print("max_episode_steps =", self._max_episode_steps)
+    # else:
+    #   print("episode terminated ")
+      # print("env_step_counter =", self.env_step_counter)
+      # print("max_episode_steps =", self._max_episode_steps)
         
 
     info = {"terminated": terminated}

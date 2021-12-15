@@ -5,6 +5,7 @@ import math
 import os
 
 import numpy as np
+import re
 import pybullet
 import pybullet_data as pd
 from motion_imitation.robots import laikago_motor
@@ -31,6 +32,12 @@ MOTOR_NAMES = [
     "abduct_hr_to_thigh_hr_j",  # Right rear hip (upper3).
     "thigh_hr_to_knee_hr_j",  # Right rear knee (lower3).
 ]
+HIP_NAME_PATTERN = re.compile(r"\w+_to_abduct_\w+")
+UPPER_NAME_PATTERN = re.compile(r"\w+_to_thigh_\w+")
+LOWER_NAME_PATTERN = re.compile(r"\w+_to_knee_\w+")
+TOE_NAME_PATTERN = re.compile(r"toe_\w+")
+IMU_NAME_PATTERN = re.compile(r"imu\d*")
+
 MAX_MOTOR_ANGLE_CHANGE_PER_STEP = 0.2
 
 DEFAULT_TORQUE_LIMITS = [12, 18, 12] * 4
@@ -272,7 +279,43 @@ class MiniCheetah(minitaur.Minitaur):
           self.quadruped, self._joint_name_to_id[name], angle, targetVelocity=0)
 
   def _BuildUrdfIds(self):
-    pass
+    num_joints = self.pybullet_client.getNumJoints(self.quadruped)
+    self._hip_link_ids = [-1]
+    self._leg_link_ids = []
+    self._motor_link_ids = []
+    self._lower_link_ids = []
+    self._foot_link_ids = []
+    self._imu_link_ids = []
+
+    for i in range(num_joints):
+      joint_info = self.pybullet_client.getJointInfo(self.quadruped, i)
+      joint_name = joint_info[1].decode("UTF-8")
+      joint_id = self._joint_name_to_id[joint_name]
+      if HIP_NAME_PATTERN.match(joint_name):
+        self._hip_link_ids.append(joint_id)
+      elif UPPER_NAME_PATTERN.match(joint_name):
+        self._motor_link_ids.append(joint_id)
+      # We either treat the lower leg or the toe as the foot link, depending on
+      # the urdf version used.
+      elif LOWER_NAME_PATTERN.match(joint_name):
+        self._lower_link_ids.append(joint_id)
+      elif TOE_NAME_PATTERN.match(joint_name):
+        #assert self._urdf_filename == URDF_WITH_TOES
+        self._foot_link_ids.append(joint_id)
+      elif IMU_NAME_PATTERN.match(joint_name):
+        self._imu_link_ids.append(joint_id)
+      else:
+        raise ValueError("Unknown category of joint %s" % joint_name)
+
+    self._leg_link_ids.extend(self._lower_link_ids)
+    self._leg_link_ids.extend(self._foot_link_ids)
+
+    #assert len(self._foot_link_ids) == NUM_LEGS
+    self._hip_link_ids.sort()
+    self._motor_link_ids.sort()
+    self._lower_link_ids.sort()
+    self._foot_link_ids.sort()
+    self._leg_link_ids.sort()
 
   def _GetMotorNames(self):
     return MOTOR_NAMES
@@ -284,7 +327,7 @@ class MiniCheetah(minitaur.Minitaur):
       return INIT_POSITION
 
   def _GetDefaultInitOrientation(self):
-    init_orientation = [0, 0, 0, 1.0]
+    init_orientation = pybullet.getQuaternionFromEuler([0., 0., 0.])
     return init_orientation
   
   def _ClipMotorCommands(self, motor_commands):
