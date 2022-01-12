@@ -47,6 +47,7 @@ def imitation_terminal_condition(env,
 
   motion_over = task.is_motion_over()
   foot_links = env.robot.GetFootLinkIDs()
+  foot_links.extend(env.robot.GetLowerLinkIDs())
   ground = env.get_ground()
 
   contact_fall = False
