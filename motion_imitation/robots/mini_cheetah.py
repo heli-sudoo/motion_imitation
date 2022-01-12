@@ -262,6 +262,9 @@ class MiniCheetah(minitaur.Minitaur):
 
   def GetURDFFile(self):
     return self._urdf_filename
+  
+  def GetLowerLinkIDs(self):
+      return self._lower_link_ids
 
   def ResetPose(self, add_constraint):
     del add_constraint
@@ -306,7 +309,6 @@ class MiniCheetah(minitaur.Minitaur):
         self._imu_link_ids.append(joint_id)
       else:
         raise ValueError("Unknown category of joint %s" % joint_name)
-
     self._leg_link_ids.extend(self._lower_link_ids)
     self._leg_link_ids.extend(self._foot_link_ids)
 

@@ -264,6 +264,9 @@ class Minitaur(object):
   def GetFootLinkIDs(self):
     """Get list of IDs for all foot links."""
     return self._foot_link_ids
+  
+  def GetLowerLinkIDs(self):
+    return []
 
   def _RecordMassInfoFromURDF(self):
     """Records the mass information from the URDF file."""
