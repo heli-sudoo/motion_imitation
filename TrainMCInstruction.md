@@ -1,5 +1,6 @@
 Follow the instructions in README.md to install dependency
 
+Note: Use Python 3.6.8. This is compatible with the tensorflow version specified in requirements.txt
 ``` git checkout dev-heli ```
 
 To train a policy
