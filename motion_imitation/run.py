@@ -15,7 +15,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import inspect
+from numpy.core.overrides import ARRAY_FUNCTION_ENABLED
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+os.sys.path.insert(0, parentdir)
+
 import pickle as pkl
+import sys
 from stable_baselines.common.callbacks import CheckpointCallback
 from motion_imitation.learning import ppo_imitation as ppo_imitation
 from motion_imitation.learning import imitation_policies as imitation_policies
@@ -26,14 +35,8 @@ import random
 import numpy as np
 from mpi4py import MPI
 import argparse
-import os
-import inspect
 
-from numpy.core.overrides import ARRAY_FUNCTION_ENABLED
-currentdir = os.path.dirname(os.path.abspath(
-    inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-os.sys.path.insert(0, parentdir)
+
 
 
 TIMESTEPS_PER_ACTORBATCH = 4096
@@ -166,7 +169,7 @@ def rollout(model, env):
     time_arr = np.array([])
     time = 0
     time_step = 0.033
-
+    
     while episode_count < num_local_episodes:
         # get contact status at current step
         ctacts = env.GetFootContacts()
