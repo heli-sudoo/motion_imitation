@@ -9,7 +9,7 @@ if [ $# -eq 0 ]; then
 else
    Robot=$1
    Gait=$2
-   Policy_dir=motion_imitation/data/policies/$Robot/$3
+   Policy_dir=motion_imitation/data/policies/intermediate/$Robot/$3
    if [ -d $Policy_dir ]; then
       echo "Dir $Policy_dir exists"
    else
