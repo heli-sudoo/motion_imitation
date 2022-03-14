@@ -117,8 +117,9 @@ def build_imitation_env(motion_files, num_parallel_envs, mode,
   task = imitation_task.ImitationTask(ref_motion_filenames=motion_files,
                                       enable_cycle_sync=True,
                                       tar_frame_steps=[1, 2, 10, 30],
-                                      ref_state_init_prob=0.9,
-                                      warmup_time=0.25)
+                                      ref_state_init_prob=0.9, # 0.9 original
+                                      warmup_time=0.25,
+                                      enable_rand_init_time=True) # True original
 
   randomizers = []
   if enable_randomizer:
