@@ -15,10 +15,12 @@
 
 import os
 import inspect
+from turtle import pd
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
+import pdb
 
 """Pybullet simulation of a Laikago robot."""
 import math
@@ -234,9 +236,17 @@ class Laikago(minitaur.Minitaur):
       if contact[_BODY_B_FIELD_NUMBER] == self.quadruped:
         continue
       try:
+        # pdb.set_trace()
         toe_link_index = self._foot_link_ids.index(
             contact[_LINK_A_FIELD_NUMBER])
-        contacts[toe_link_index] = True
+        if contact[_LINK_A_FIELD_NUMBER] == 3:
+          contacts[0] = True
+        if contact[_LINK_A_FIELD_NUMBER] == 7:
+          contacts[1] = True
+        if contact[_LINK_A_FIELD_NUMBER] == 11:
+          contacts[2] = True
+        if contact[_LINK_A_FIELD_NUMBER] == 15:
+          contacts[3] = True
       except ValueError:
         continue
 
@@ -383,3 +393,10 @@ class Laikago(minitaur.Minitaur):
   def GetConstants(cls):
     del cls
     return laikago_constants
+  def GetNominalMotorTorques(self):
+    """ Get the nominal torques computed via ApplyAction
+
+    Returns:
+      Nominal motor torques
+    """
+    return self._applied_motor_torques
