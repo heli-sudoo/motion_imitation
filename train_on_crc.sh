@@ -7,7 +7,7 @@
 #$ -t 1-2            # Specify number of tasks in array
 #$ -N mc_trot 	       # job name
 module load mpich/3.3/intel/19.0
-conda activate RLMPC
+conda activate RLMPCPy36
 export OMP_NUM_THREADS=${NSLOTS}
 
 Gait=trot
