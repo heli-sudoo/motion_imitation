@@ -242,6 +242,12 @@ class MiniCheetah(minitaur.Minitaur):
       self.quadruped = self._pybullet_client.loadURDF(
           self._urdf_filename, self._GetDefaultInitPosition(),
           self._GetDefaultInitOrientation())
+    # change the appearance color
+    robot_visuals = self._pybullet_client.getVisualShapeData(self.quadruped)
+    # change visual color of the robot
+    for visual_obj in robot_visuals:
+        if visual_obj[1] not in [3,7,11,15]:
+            self._pybullet_client.changeVisualShape(self.quadruped, visual_obj[1], rgbaColor = [0.65, 0.65, 0.65, 1])
 
   def _SettleDownForReset(self, default_motor_angles, reset_time):
     self.ReceiveObservation()
