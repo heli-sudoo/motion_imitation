@@ -17,6 +17,8 @@
 
 import os
 import inspect
+import pdb
+from signal import pause
 from numpy.core.overrides import ARRAY_FUNCTION_ENABLED
 currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
@@ -35,7 +37,7 @@ import random
 import numpy as np
 from mpi4py import MPI
 import argparse
-
+import time as tm
 
 
 
@@ -169,7 +171,7 @@ def rollout(model, env):
     time_arr = np.array([])
     time = 0
     time_step = 0.033
-    
+
     while episode_count < num_local_episodes:
         # get contact status at current step
         ctacts = env.GetFootContacts()
@@ -205,9 +207,9 @@ def rollout(model, env):
         q_arr = np.vstack((q_arr, q)) if q_arr.size else q
         qd_arr = np.vstack((qd_arr, qd)) if qd_arr.size else qd
         time_arr = np.append(time_arr, time)
-
         curr_return += r
         time += time_step
+        # tm.sleep(1)        
         if done:
             o = env.reset()
             sum_return += curr_return
