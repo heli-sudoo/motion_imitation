@@ -14,6 +14,6 @@ else
       echo "Dir $Policy_dir exists"
    else
       mkdir $Policy_dir
-      mpiexec -n 8 python3 motion_imitation/run.py --mode train --robot $Robot --motion_file motion_imitation/data/motions/$Robot/$Gait.txt --output_dir $Policy_dir --int_save_freq 10000000
+      python3 motion_imitation/run.py --mode train --robot $Robot --motion_file motion_imitation/data/motions/$Robot/$Gait.txt --output_dir $Policy_dir --int_save_freq 10000000 --visualize
    fi
 fi
