@@ -42,8 +42,8 @@ MAX_MOTOR_ANGLE_CHANGE_PER_STEP = 0.2
 
 DEFAULT_TORQUE_LIMITS = [12, 18, 12] * 4
 INIT_RACK_POSITION = [0, 0, 1.4]
-INIT_POSITION = [0, 0, 0.404]
-JOINT_DIRECTIONS = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+INIT_POSITION = [0, 0, 0.36]
+JOINT_DIRECTIONS = np.asarray([1, 1, 1]*4)
 DOFS_PER_LEG = 3
 JOINT_OFFSETS = np.array([0.0, 0.0, 0.0] * 4)
 PI = math.pi
@@ -318,13 +318,15 @@ class MiniCheetah(minitaur.Minitaur):
     self._leg_link_ids.extend(self._lower_link_ids)
     self._leg_link_ids.extend(self._foot_link_ids)
 
+    if self._allow_knee_contact:
+      self._foot_link_ids.extend(self._lower_link_ids)
     #assert len(self._foot_link_ids) == NUM_LEGS
     self._hip_link_ids.sort()
     self._motor_link_ids.sort()
     self._lower_link_ids.sort()
     self._foot_link_ids.sort()
     self._leg_link_ids.sort()
-
+    
   def _GetMotorNames(self):
     return MOTOR_NAMES
 
