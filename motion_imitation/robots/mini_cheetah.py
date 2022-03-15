@@ -41,8 +41,8 @@ IMU_NAME_PATTERN = re.compile(r"imu\d*")
 MAX_MOTOR_ANGLE_CHANGE_PER_STEP = 0.2
 
 DEFAULT_TORQUE_LIMITS = [12, 18, 12] * 4
-INIT_RACK_POSITION = [0, 0, 1.4]
-INIT_POSITION = [0, 0, 0.36]
+INIT_RACK_POSITION = [0, 0, 1]
+INIT_POSITION = [0, 0, 0.3]
 JOINT_DIRECTIONS = np.asarray([1, 1, 1]*4)
 DOFS_PER_LEG = 3
 JOINT_OFFSETS = np.array([0.0, 0.0, 0.0] * 4)
@@ -64,7 +64,7 @@ INIT_MOTOR_ANGLES = [
 ] * NUM_LEGS
 
 ABDUCTION_P_GAIN = 80.0
-ABDUCTION_D_GAIN = 1.
+ABDUCTION_D_GAIN = 2.
 HIP_P_GAIN = 80.0
 HIP_D_GAIN = 1.0
 KNEE_P_GAIN = 80.0
@@ -248,7 +248,7 @@ class MiniCheetah(minitaur.Minitaur):
     for visual_obj in robot_visuals:
         if visual_obj[1] not in [3,7,11,15]:
             self._pybullet_client.changeVisualShape(self.quadruped, visual_obj[1], rgbaColor = [0.65, 0.65, 0.65, 1])
-
+    
   def _SettleDownForReset(self, default_motor_angles, reset_time):
     self.ReceiveObservation()
     for _ in range(500):
