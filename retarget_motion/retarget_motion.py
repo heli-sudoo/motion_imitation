@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """Run from motion_imitation/retarget_motion to find data correctly."""
 
 from __future__ import absolute_import
@@ -50,8 +49,8 @@ mocap_motions = [
   ["trot", "data/dog_walk03_joint_pos.txt",448,481 ],
   ["trot2", "data/dog_run04_joint_pos.txt",630,663 ],
   ["canter", "data/dog_run00_joint_pos.txt", 430, 459],
-  ["left_turn0", "data/dog_walk09_joint_pos.txt",1085,1124 ],
-  ["right_turn0", "data/dog_walk09_joint_pos.txt", 2404,2450],
+  ["left turn0", "data/dog_walk09_joint_pos.txt",1085,1124 ],
+  ["right turn0", "data/dog_walk09_joint_pos.txt", 2404,2450],
 ]
 
   
@@ -229,8 +228,8 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
     ref_toe_pos = ref_joint_pos[ref_toe_id]
     ref_hip_pos = ref_joint_pos[ref_hip_id]
 
-    hip_link_state = pybullet.getLinkState(robot, sim_hip_id, computeForwardKinematics=True) 
-    sim_hip_pos = np.array(hip_link_state[4]) # index 4 represents link frame position in world frame
+    hip_link_state = pybullet.getLinkState(robot, sim_hip_id, computeForwardKinematics=True)
+    sim_hip_pos = np.array(hip_link_state[4])
 
     toe_offset_world = pose3d.QuaternionRotatePoint(toe_offset_local, heading_rot)
 
@@ -241,9 +240,6 @@ def retarget_pose(robot, default_pose, ref_joint_pos):
 
     tar_toe_pos.append(sim_tar_toe_pos)
 
-  # IK solves an optimization problem that whose solution is close to the target position
-  # in task space and is biased by default_pose if there are many solutions
-  # see slide 25 on https://ipvs.informatik.uni-stuttgart.de/mlr/marc/teaching/13-Robotics/02-kinematics.pdf
   joint_pose = pybullet.calculateInverseKinematics2(robot, config.SIM_TOE_JOINT_IDS,
                                                     tar_toe_pos,
                                                     jointDamping=config.JOINT_DAMPING,
@@ -350,7 +346,7 @@ def main(argv):
       print("mocap_name=", mocap_motion[0])
       joint_pos_data = load_ref_data(mocap_motion[1],mocap_motion[2],mocap_motion[3])
     
-      num_markers = joint_pos_data.shape[-1] 
+      num_markers = joint_pos_data.shape[-1] // POS_SIZE
       marker_ids = build_markers(num_markers)
     
       retarget_frames = retarget_motion(robot, joint_pos_data)
@@ -395,4 +391,3 @@ def main(argv):
 
 if __name__ == "__main__":
   tf.app.run(main)
-
