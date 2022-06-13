@@ -201,7 +201,7 @@ class ImitationTask(object):
       rand_val = self._rand_uniform(0.0, 1.0)
       perturb_state = rand_val < self._perturb_init_state_prob
 
-    self._sync_sim_model(perturb_state)
+    # self._sync_sim_model(perturb_state)
 
     return
 
