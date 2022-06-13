@@ -127,6 +127,25 @@ def plot_contact_sequences(time, ctacts):
         ax.set_yticks([-1, 0, 1, 2, 3, 4])
         ax.set_yticklabels(('','FR','FL','RR','RL',''))
 
+def plot_contact_wrt_time(time, ctacts):
+    fig, axs = plt.subplots(2,2)
+    axs[0,0].plot(time, ctacts[:, 0])
+    axs[0,0].set_xlabel('time (s)')
+    axs[0,0].set_ylabel('contact')
+
+    axs[0,1].plot(time, ctacts[:, 1])
+    axs[0,1].set_xlabel('time (s)')
+    axs[0,1].set_ylabel('contact')
+
+    axs[1,0].plot(time, ctacts[:, 2])
+    axs[1,0].set_xlabel('time (s)')
+    axs[1,0].set_ylabel('contact')
+
+    axs[1,1].plot(time, ctacts[:, 3])
+    axs[1,1].set_xlabel('time (s)')
+    axs[1,1].set_ylabel('contact')
+    
+
 
 
 with open(rollout_fname, 'rb') as f:
@@ -143,8 +162,9 @@ rpy_arr, pos_arr, rpyrate_arr, vel_arr, q_arr, qd_arr = state_traj
 # plot_body_vel(time_arr, vel_arr)
 # plot_body_rpy_rate(time_arr, rpyrate_arr)
 # plot_contact_sequences(time_arr, ctacts_arr)
-# plt.tight_layout()
-# plt.show()
+plot_contact_wrt_time(time_arr, ctacts_arr)
+plt.tight_layout()
+plt.show()
 
 
 # save roll-out trajectory to txt file
