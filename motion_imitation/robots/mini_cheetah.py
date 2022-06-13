@@ -406,4 +406,11 @@ class MiniCheetah(minitaur.Minitaur):
     R = np.reshape(pybullet.getMatrixFromQuaternion(quat),[3,3])
     foot_pos_global = R @ np.transpose(foot_pos_body + pos)
     return foot_pos_global.transpose()
- 
+
+  def GetNominalMotorTorques(self):
+      """ Get the nominal torques computed via ApplyAction
+
+      Returns:
+        Nominal motor torques
+      """
+      return self._applied_motor_torques
