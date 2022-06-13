@@ -9,6 +9,15 @@ import numpy as np
 
 import time
 from tqdm import tqdm
+
+import os
+import inspect
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+grandparentdir = os.path.dirname(os.path.dirname(parentdir))
+os.sys.path.insert(0, grandparentdir)
+
 from motion_imitation.robots import mini_cheetah as mc
 from motion_imitation.robots import robot_config
 from motion_imitation.envs.utilities import terrain
@@ -24,6 +33,8 @@ def main():
     terrain.get_uneven_terrain()
         
     robot = mc.MiniCheetah(pybullet_client=pybullet_client, action_repeat=1)
+    robot._BuildUrdfIds()
+
     # udpate the observation
     robot.ReceiveObservation()
     init_jnt_angles = robot.GetTrueMotorAngles() # in nparray
